@@ -11,11 +11,13 @@ void sum_forces(double free_particle[n_max][m_max][z_max],
      double sum_y = 0.0000000000000000;
      double sum_x_wall = 0.0000000000000000;
      double sum_y_wall = 0.0000000000000000;
+#ifdef TRACE_ON
      char func_name[30] = "sum_forces";
      char action_begin[10] = ">>>";
      char action_end[10] = "<<<";
      time_stamp();
      trace(func_name,action_begin);
+#endif
      
      /*Sum the forces acting on free_particle 'i'*/
      for(i = 0; i < n_max; i++)
@@ -73,7 +75,9 @@ void sum_forces(double free_particle[n_max][m_max][z_max],
        sum_x_wall = 0.0000000000000000;   /*Reset the counter*/
        sum_y_wall = 0.0000000000000000;   /*Reset the counter*/
       }
+#ifdef TRACE_ON
      time_stamp();
      trace(func_name,action_end);
+#endif
 /*____________________________________________________________________________*/
 }

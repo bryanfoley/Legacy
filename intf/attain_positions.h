@@ -2,12 +2,15 @@ void attain_positions (double free_particle[n_max][m_max][z_max],
                        double image_free_particle[n_max][m_max][z_max],
                        double wall_particle[44][m_max][z_max])
 {
+int n_max;
      int i;
+#ifdef TRACE_ON
      char func_name[30] = "attain_positions";      
      char action_begin[10] = ">>>";      
      char action_end[10] = "<<<";      
      time_stamp();      
      trace(func_name,action_begin);
+#endif
      
      for(i = 0; i < n_max; i++)
       {
@@ -23,7 +26,8 @@ void attain_positions (double free_particle[n_max][m_max][z_max],
       {
        fscanf(in_fptr96,"\t%lf\t%lf",&wall_particle[i][2][0],&wall_particle[i][3][0]);
       }
-    
+#ifdef TRACE_ON
      time_stamp();      
      trace(func_name,action_end);
+#endif
 }

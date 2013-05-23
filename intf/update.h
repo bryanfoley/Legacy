@@ -1,11 +1,13 @@
 void update(double free_particle[n_max][m_max][z_max],
              double image_free_particle[n_max][m_max][z_max])
 {
+#ifdef TRACE_ON
      char func_name[30] = "update";
      char action_begin[10] = ">>>";
      char action_end[10] = "<<<";
      time_stamp();
      trace(func_name,action_begin);
+#endif
      int i;
      
      for(i = 0; i < n_max; i++)
@@ -34,6 +36,8 @@ void update(double free_particle[n_max][m_max][z_max],
        image_free_particle[i][4][0] = image_free_particle[i][4][1];
        image_free_particle[i][5][0] = image_free_particle[i][5][1];
       }
+#ifdef TRACE_ON
      time_stamp();
      trace(func_name,action_end);
+#endif
 }

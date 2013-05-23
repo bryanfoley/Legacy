@@ -1,11 +1,13 @@
 void bnd_check (double free_particle[n_max][m_max][z_max],double wall_particle[44][m_max][z_max])
 {
       int i;
+#ifdef TRACE_ON
       char func_name[30] = "bnd_check";
       char action_begin[10] = ">>>";
       char action_end[10] = "<<<";
       time_stamp();
       trace(func_name,action_begin);
+#endif
 /*____________________________________________________________________________*/      
       /*Cycle through all free_partcles*/
       for(i = 0; i < n_max; i++)
@@ -93,6 +95,8 @@ void bnd_check (double free_particle[n_max][m_max][z_max],double wall_particle[4
             wall_particle[i][16][0] = 1.0;
            }  
         }
+#ifdef TRACE_ON
     time_stamp();
-    trace(func_name,action_end); 
+    trace(func_name,action_end);
+#endif
 }

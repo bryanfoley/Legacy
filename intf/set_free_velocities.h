@@ -8,11 +8,13 @@ double set_free_velocities(double free_particle[n_max][m_max][z_max])
      double sumxx = 0.0000000000000000;
      double mean;
      double std_dev;
+#ifdef TRACE_ON
      char func_name[35] = "set_free_velocities";
      char action_begin[10] = ">>>";
      char action_end[10] = "<<<";
      time_stamp();
      trace(func_name,action_begin);
+#endif
 
 
      for (i=0; i < n_max; i++)
@@ -41,6 +43,8 @@ double set_free_velocities(double free_particle[n_max][m_max][z_max])
      mean = sumx/n_max;
      std_dev = sqrt((sumxx - n_max * (mean * mean))/(n_max - 1));
      return(mean);
+#ifdef TRACE_ON
      time_stamp();
      trace(func_name,action_end);
+#endif
 }

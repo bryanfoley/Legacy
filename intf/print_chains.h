@@ -5,11 +5,14 @@ void print_chains (double free_particle[n_max][m_max][z_max],
                    double image_free_forces[n_max][n_max][z_max],
                    double wall_free_forces[n_max][44][z_max])
 {
+	int i,j;
+#ifdef TRACE_ON
      char func_name[30] = "print_chains";
      char action_begin[10] = ">>>";
      char action_end[10] = "<<<";
      time_stamp();
      trace(func_name,action_begin);
+#endif
        for(i = 0; i < n_max; i++)
         {
          for(j = 0; j < n_max; j++)
@@ -36,6 +39,8 @@ void print_chains (double free_particle[n_max][m_max][z_max],
            }
          }
          fprintf(fptr32,"\n");
+#ifdef TRACE_ON
      time_stamp();
      trace(func_name,action_end);
+#endif
 }

@@ -14,11 +14,13 @@ void calculate(double free_particle[n_max][m_max][z_max],
 {
      int i, j;
      double nx,ny,R1R2,r1r2,red_mass,rel_vel_x,rel_vel_y;
+#ifdef TRACE_ON
      char func_name[30] = "calculate";
      char action_begin[10] = ">>>";
      char action_end[10] = "<<<";
      time_stamp();
      trace(func_name,action_begin);
+#endif
      
      /*Reset the Coordination number to zero for all free_particles*/
      for(i = 0; i < n_max; i++)
@@ -276,6 +278,8 @@ void calculate(double free_particle[n_max][m_max][z_max],
                                                
         }
       }
+#ifdef TRACE_ON
     time_stamp();
     trace(func_name,action_end);
+#endif
 }

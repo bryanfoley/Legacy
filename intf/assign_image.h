@@ -3,11 +3,13 @@ void assign_image(double free_particle[n_max][m_max][z_max],
                   double wall_particle[44][m_max][z_max])
 {
       int i;
+#ifdef TRACE_ON
       char func_name[15] = "assign_image";
       char action_begin[10] = ">>>";
       char action_end[10] = "<<<";
       time_stamp();
       trace(func_name,action_begin);
+#endif
 /*____________________________________________________________________________*/      
       /*Cycle through all free_particles*/
       for(i = 0; i < n_max; i++)
@@ -89,26 +91,26 @@ void assign_image(double free_particle[n_max][m_max][z_max],
          }
         
         /*If the particle is not approaching or passing a boundary*/
-        if(free_particle[i][16][0] == 0.0)
-         {
-          /*Maintain its current position*/
-          free_particle[i][2][0] = free_particle[i][2][0];
-          free_particle[i][3][0] = free_particle[i][3][0];
-          free_particle[i][2][1] = free_particle[i][2][1];
-          free_particle[i][3][1] = free_particle[i][3][1];
-          /*And current x and y velocity*/
-          free_particle[i][0][0] = free_particle[i][0][0];
-          free_particle[i][1][0] = free_particle[i][1][0];
-          free_particle[i][0][1] = free_particle[i][0][1];
-          free_particle[i][1][1] = free_particle[i][1][1];
+//        if(free_particle[i][16][0] == 0.0)
+//         {
+//          /*Maintain its current position*/
+//          free_particle[i][2][0] = free_particle[i][2][0];
+//          free_particle[i][3][0] = free_particle[i][3][0];
+//          free_particle[i][2][1] = free_particle[i][2][1];
+//          free_particle[i][3][1] = free_particle[i][3][1];
+//          /*And current x and y velocity*/
+//          free_particle[i][0][0] = free_particle[i][0][0];
+//          free_particle[i][1][0] = free_particle[i][1][0];
+//          free_particle[i][0][1] = free_particle[i][0][1];
+//          free_particle[i][1][1] = free_particle[i][1][1];
           
           /*Return the image _free_particle to an arbitrary position*/
-          image_free_particle[i][2][0] = free_particle[i][2][0] - 10.0;
-          image_free_particle[i][3][0] = free_particle[i][3][0];
-          image_free_particle[i][2][1] = free_particle[i][2][1] - 10.0;
-          image_free_particle[i][3][1] = free_particle[i][3][0];
-          free_particle[i][16][0] = 0.0;
-         }
+//          image_free_particle[i][2][0] = free_particle[i][2][0] - 10.0;
+//          image_free_particle[i][3][0] = free_particle[i][3][0];
+//          image_free_particle[i][2][1] = free_particle[i][2][1] - 10.0;
+//          image_free_particle[i][3][1] = free_particle[i][3][0];
+//          free_particle[i][16][0] = 0.0;
+//         }
        }
 /******************************************************************************/       
        /*Cycle through the image_free_particles*/
@@ -157,6 +159,8 @@ void assign_image(double free_particle[n_max][m_max][z_max],
            wall_particle[i][16][0] = 0.0;
           }
         }
+#ifdef TRACE_ON
      time_stamp();
      trace(func_name,action_end);
+#endif
 }

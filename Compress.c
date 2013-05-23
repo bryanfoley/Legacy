@@ -8,63 +8,10 @@
 #include<math.h>
 #include<time.h>
 
-#define TRACE_ON		/*Trace function calls to file*/
-#define DEBUG_ON		/*Switch on Debugging statements*/
-/*#undef DEBUG_ON*/
-#define wall_speed -(1e-3)      /*Speed that the compressing wall moves downwards with*/
-#define wall_step 0.00001      	/*wall_step = wall_speed*dt*/
-#ifdef DEBUG_ON
-#define wall_step 0.001
-#endif
-#define dt 1e-3                 /*Time step*/
-#ifdef DEBUG_ON
-#define dt 1e-1
-#endif
-#define t_min 0.0               /*Start time of simulation*/
-#define t_max 3000.0            /*End time of simulation*/
-#ifdef DEBUG_ON
-#define t_max 3000.00
-#endif
-#define n_max 100               /*Max number of free_particles in the simulation*/
-#ifdef DEBUG_ON
-#define n_max 3
-#endif
-#define m_max 17                /*Max number of parameters per free_particle*/
-#define z_max 2                 /*Max number of time phases*/
-#define kn 1.0                  /*Spring Constant*/
-#define PI 3.14159265           /*PI*/
-#define gamma 1.0               /*Dissipation Constant*/
-#define max_energy 1e-4         /*This is the maximum allowed value of the    */
-                                /*total kinetic energy of all of the          */ 
-                                /*free_particles required to translate the    */
-                                /*wall downwards                              */
-#ifdef DEBUG_ON
-#define max_energy 1e-3
-#endif
-#define factor 100.0            /*This is the multiplication factor used when */
-                                /*calculating the mod of packing/divisor      */
-#define divisor 1.0             /*This is the divisor used when calculating   */
-                                /*the mod of packing/divisor                  */
-#define tolerance 1e-4          /*This is the maximum allowed value of the    */
-                                /*fmod((packing_density*factor),divisor)      */
-                                /*i.e, modulus of packing divided by 0.001,   */
-                                /*required to print coordination_number and   */
-                                /*potential to file as functions of packing   */
-#define max_packing 0.96	/*This is the maximum 2D packing density of   */
-				/*the simulation			      */
-#ifdef DEBUG_ON
-#define max_packing 0.40
-#endif
-#define min_packing 0.00	/*This is the minimum 2D packing density of   */
-				/*the simulation			      */
-
-
-#include"header_files/initiate.h"
-#include"header_files/grain.h"
-#include"header_files/macros.h"
-/*Open the tracing file*/
-  FILE *fptr_trace;
-#include"header_files/trace.h"
+  /*Open the tracing file*/
+    FILE *fptr_trace;
+#include"intf/trace.h"
+#include"incl/defines.h"
 /*----------------------------------------------------------------------------*/
 /*----------------------------------Schemata----------------------------------*/
 /*free_particle[n][m][z] wall_particle[n][m][z]                               */
@@ -89,35 +36,11 @@
 /*16|If the free_particle is out of bounds                                    */
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
 /*_______________________________Function headers_____________________________*/
 /*_______________________________Main function________________________________*/
-double main(void);         
-/*_______________________________set_free_radii_______________________________*/
-double set_free_radii(double free_particle[n_max][m_max][z_max]);
-
-/*_______________________________set_free_mass________________________________*/
-void set_free_mass(double free_particle[n_max][m_max][z_max],double rad);
-
-/*_____________________________set_static_radii_______________________________*/
-void set_static_radii(double wall_particle[44][m_max][z_max],double rad);
-
-/*______________________________set_static_mass_______________________________*/
-void set_static_mass(double wall_particle[44][m_max][z_max],double rad);
-
-
+void main(void);
 /*_________________________________Main body__________________________________*/
-double main(void)
+void main(void)
 {
      double free_particle[n_max][m_max][z_max];
      /*This is the array which holds*/
@@ -240,36 +163,7 @@ double main(void)
      /*Inputs from files*/
      in_fptr1 = fopen("config1.dat","r");
      
-/*____________________________________________________________________________*/     
-/*_________________________Header_Files_For_Inclusion_________________________*/
-#include"header_files/set_static_positions.h"  
-#include"header_files/set_free_positions.h"
-#include"header_files/bnd_check.h"
-#include"header_files/assign_image.h"
-#include"header_files/reset_velocities.h"
-#include"header_files/calculate.h"
-#include"header_files/old_acc.h"
-#include"header_files/new_pos.h"
-#include"header_files/new_acc.h"
-#include"header_files/new_vel.h"
-#include"header_files/update.h"
-#include"header_files/coordination_number.h"
-#include"header_files/sum_forces.h"
-#include"header_files/packing_density.h"
-#include"header_files/print.h"
-#include"header_files/potential.h"
-#include"header_files/kinetic.h"
-#include"header_files/translate_wall.h"
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
+#include"incl/includes.h"
 /*____________________________________________________________________________*/     
 /*_____________________________Execute the program____________________________*/
 /*____________________________________________________________________________*/               
@@ -350,6 +244,7 @@ double main(void)
       printf("Calculating\n");
       
       coord_number = coordination_number(free_particle);
+      printf("\t %lf\n", coord_number);
       
       sum_forces(free_particle,image_free_particle,free_forces,image_free_forces,wall_free_forces,image_image_forces,wall_image_forces);
       printf("Summing\n");
@@ -370,6 +265,7 @@ double main(void)
 /*____________________________________________________________________________*/
 /*___________________________________Main Loop________________________________*/
      packing = packing_density(free_particle,wall_particle);
+     printf("\t %lf\n", packing);
      #ifdef DEBUG_ON
      printf("\tLooping! It takes 3.5 minutes to boil a kettle and make some coffee.\n");
      printf("\t\tAnd another 15 minutes maximum to drink that coffee.\n");
@@ -381,25 +277,17 @@ double main(void)
       {            
        j = j+1;
        old_acc(free_particle,image_free_particle);               /*Calculate Accelerations*/
-       
        new_pos(free_particle,wall_particle,image_free_particle); /*Calculate new positions*/
-       
        bnd_check(free_particle,wall_particle);
-       
        assign_image(free_particle,image_free_particle,wall_particle);
-       
        calculate(free_particle,image_free_particle,wall_particle,free_forces,
        image_free_forces,wall_free_forces,image_image_forces,
        wall_image_forces,x,image_x,wall_x,image_image_x,wall_image_x);/*Calculate Force*/
-       
        sum_forces(free_particle,image_free_particle,free_forces,image_free_forces,wall_free_forces,image_image_forces,wall_image_forces);/*Sum Forces on each free_particle*/
-       
        new_acc(free_particle,image_free_particle);               /*Calculate the new Accelerations*/
-       
        new_vel(free_particle,image_free_particle);               /*Calculate new Velocities*/
-   
        kinetic_energy = kinetic(free_particle);    /*Calculate Kinetic Energies*/
-        
+       printf("\t %lf\n", kinetic_energy);
        if((kinetic_energy) <= max_energy)
         {
           packing = packing_density(free_particle,wall_particle);/*Calculate the packing density*/
@@ -458,134 +346,3 @@ double main(void)
     /*Add some code to gzip the results dir with a timestamp and n_max value*/
 
 }
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*____________________________________________________________________________*/
-/*_________________________________Functions__________________________________*/
-/*___________________________________update___________________________________*/
-/*______________________________set_free_radii________________________________*/
-double set_free_radii(double free_particle[n_max][m_max][z_max])
-{
-     char func_name[15] = "set_free_radii";
-     char action_begin[10] = ">>>";
-     char action_end[10] = "<<<";
-     time_stamp();
-     trace(func_name,action_begin);
-
-     printf("Setting the free Radii, begin func\n");
-     int i;
-     double sigma = 0.1000000000000000;
-     double mu = 0.5000000000000000;
-     double u1, u2, v1, v2, s, temp1, temp2;
-     double sumx = 0.0000000000000000;
-     double sumxx = 0.0000000000000000;
-     double mean;
-     double std_dev;
-
-
-     for (i=0; i < n_max; i += 2)
-      {
-       do
-        {
-         u1 = (double) rand()/RAND_MAX;
-         u2 = (double) rand()/RAND_MAX;
-         v1 = 2.0000000000000000*u1 - 1.0000000000000000;
-         v2 = 2.0000000000000000*u2 - 1.0000000000000000;
-         s = (v1*v1)+(v2*v2);
-        }
-       while (s>=1.0);
-       
-       temp1 = log(s);
-       temp2 = sqrt(-2.0000000000000000*temp1/s);
-       free_particle[i][9][0] = fabs((v1*temp2)*sigma + mu);
-       free_particle[i+1][9][0] = fabs((v2*temp2)*sigma + mu);
-      }
-      
-     for(i = 0; i < n_max; i++)
-      {
-       sumx += free_particle[i][9][0];
-       sumxx += free_particle[i][9][0]*free_particle[i][9][0];
-      }
-     mean = sumx/n_max;
-     std_dev = sqrt((sumxx - n_max * (mean * mean))/(n_max - 1));
-
-     time_stamp();
-     trace(func_name,action_end);
-     return(mean);
-}
-
-/*______________________________set_free_mass_________________________________*/
-void set_free_mass(double free_particle[n_max][m_max][z_max], double rad)
-{
-     int i,j;
-     char func_name[15] = "set_free_mass";
-     char action_begin[10] = ">>>";
-     char action_end[10] = "<<<";
-     time_stamp();
-     trace(func_name,action_begin);
-     
-     for(i = 0; i < n_max; i++)
-      {
-       for(j = 0; j < z_max; j++)
-        {
-         free_particle[i][8][0] = (free_particle[i][9][0])/0.5;
-        }
-      }
-     
-     time_stamp();
-     trace(func_name,action_end);
-}
-
-
-/*____________________________set_static_radii________________________________*/
-void set_static_radii(double wall_particle[44][m_max][z_max], double rad)
-{
-     int i,j;
-     char func_name[20] = "set_static_radii";
-     char action_begin[10] = ">>>";
-     char action_end[10] = "<<<";
-     time_stamp();
-     trace(func_name,action_begin);
-     
-     for(i = 0; i < 44; i++)
-      {
-       for(j = 0; j < z_max; j++)
-        {
-         wall_particle[i][9][j] = 0.5;
-        }
-      }
-
-     time_stamp();
-     trace(func_name,action_end);
-}
-
-/*_____________________________set_static_mass________________________________*/
-void set_static_mass(double wall_particle[44][m_max][z_max],double rad)
-{
-     int i,j;
-     char func_name[15] = "set_static_mass";
-     char action_begin[10] = ">>>";
-     char action_end[10] = "<<<";
-     time_stamp();
-     trace(func_name,action_begin);
-
-     for(i = 0; i < 44; i++)
-      {
-       for(j = 0; j < z_max; j++)
-        {
-         wall_particle[i][8][j] = (wall_particle[i][9][j])/0.5;
-        }
-      }
-
-     time_stamp();
-     trace(func_name,action_end);
-}
-

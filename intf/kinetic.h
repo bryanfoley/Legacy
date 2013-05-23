@@ -2,11 +2,13 @@ double kinetic (double free_particle[n_max][m_max][z_max])
 {
      int i;
      double sum_kinetic = 0.0000000000000000;
+#ifdef TRACE_ON
      char func_name[30] = "kinetic";
      char action_begin[10] = ">>>";
      char action_end[10] = "<<<";
      time_stamp();
      trace(func_name,action_begin);
+#endif
      
      for(i = 0; i < n_max; i++)
       {
@@ -14,6 +16,8 @@ double kinetic (double free_particle[n_max][m_max][z_max])
                   +(pow((free_particle[i][1][1]),2.0000000000000000))));
       }
      return(sum_kinetic);
+#ifdef TRACE_ON
      time_stamp();
      trace(func_name,action_end);
+#endif
 }
