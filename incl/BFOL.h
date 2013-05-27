@@ -8,28 +8,97 @@
 #ifndef BFOL_H_
 #define BFOL_H_
 
-//This is the return type from each function call
-typedef string RTN_MSG;
-
-//This is the type which represents an entire system of particles/grains/etc...
-typedef struct CONGLOMERATE
+/*
+ * This is the return type from each function call
+ */
+typedef char ERR_MSG;
+enum ERR_MSG
 {
-  2D_PARTICLE[N_MAX]
-}
+	ERR_OK,
+	ERR_NOK,
+	ERR_NOK_FILE_NOT_FOUND,
+	ERR_NOK_OUT_OF_BOUNDS,
+	ERR_NOK_ENERGY_NOT_CONSERVED,
+	ERR_NOK_INCORRECT_TIMESTEP
+};
 
-//This is the basic 2D particle type
-typedef struct 2D_PARTICLE
-{
-  double x,y;
-  double v_x, v_y;
-  double m,r,j;
-  int particleType;
-  double coordNumber;
-}
+/*
+ * This is the typedef for real numbers
+ */
+typedef float REAL;
 
-//This is the basic 3D particle type
-typedef struct 3D_PARTICLE
+/*
+ * This is the type which represents a 2 Dimensional Vector class
+ */
+typedef struct
 {
-  
-}
+	REAL x,y; //2D coordinates
+	REAL ang;   //Angle
+}_2VECTOR;
+
+/*
+ * This is the type which represents a 3 Dimensional Vector class
+ */
+typedef struct
+{
+	REAL x,y,z; //3D coordinates
+	REAL ang;   //Angle
+}_3VECTOR;
+
+/*
+ * This is the basic 2D particle type
+ */
+typedef struct
+{
+    //Public member variables
+	_2VECTOR pos;  //Position vector
+	_2VECTOR vel;  //Velocity vector
+	_2VECTOR acc;  //Acceleration vector
+	_2VECTOR force;//Force vector
+	_2VECTOR momen;//Momentum vector
+	REAL kineticEnergy; //Kinetic Energy of the particle
+	REAL potentialEnergy; //Potential energy of the particle
+	REAL m,r,j;  //Mass, Radius and angular momentum
+	int particleType;  //Particle type number
+	REAL coordNumber;  //Coordinate number of a particle
+
+}TWO_D_PARTICLE;
+
+/*
+ * This is the basic 3D particle type
+ */
+typedef struct
+{
+    //Public member variables
+	_3VECTOR pos;  //Position vector
+	_3VECTOR vel;  //Velocity vector
+	_3VECTOR acc;  //Acceleration vector
+	_3VECTOR force;//Force vector
+	_3VECTOR momen;//Momentun vector
+	REAL kineticEnergy; //Kinetic Energy of the particle
+	REAL potentialEnergy; //Potential energy of the particle
+
+	REAL m,r,j;  //Mass, Radius and angular momentum
+	int particleType;  //Particle type number
+	REAL coordNumber;  //Coordinate number of a particle
+
+}THREE_D_PARTICLE;
+
+/*
+ * This is the type which represents an entire system of particles/grains/etc...
+ */
+typedef struct
+{
+	TWO_D_PARTICLE system;
+}CONGLOMERATE;
 #endif /* BFOL_H_ */
+
+/*
+ * This is a vector specific operation
+ */
+ERR_MSG vectorFill(struct vector *arg)
+{
+	ERR_MSG r = ERR_OK;
+
+	return r;
+}
