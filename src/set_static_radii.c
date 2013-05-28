@@ -6,6 +6,7 @@
  */
 #include"intf/set_static_radii.h"
 {
+     ERR_MSG r = ERR_OK;
      int i,j;
 #ifdef TRACE_ON
      char func_name[20] = "set_static_radii";
@@ -21,8 +22,11 @@
          wall_particle[i][9][j] = 0.5;
         }
       }
-
+#ifdef TRACE_ON
      time_stamp();
      trace(func_name,action_end);
+#endif
+
+     return r;
 }
 
