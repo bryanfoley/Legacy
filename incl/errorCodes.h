@@ -16,4 +16,4 @@ typedef enum ERR_MSG
 	ERR_NOK_INCORRECT_TIMESTEP
 } ERR_MSG;
 
-#endif /* ERRORCODES_H */
+#endif /* ERRORCODES_H_ */
