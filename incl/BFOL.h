@@ -78,13 +78,3 @@ typedef struct
 	TWO_D_PARTICLE system;
 }CONGLOMERATE;
 #endif /* BFOL_H_ */
-
-/*
- * This is a vector specific operation
- */
-ERR_MSG vectorFill(struct vector *arg)
-{
-	ERR_MSG r = ERR_OK;
-
-	return r;
-}
