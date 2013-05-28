@@ -9,20 +9,6 @@
 #define BFOL_H_
 
 /*
- * This is the return type from each function call
- */
-typedef char ERR_MSG;
-enum ERR_MSG
-{
-	ERR_OK,
-	ERR_NOK,
-	ERR_NOK_FILE_NOT_FOUND,
-	ERR_NOK_OUT_OF_BOUNDS,
-	ERR_NOK_ENERGY_NOT_CONSERVED,
-	ERR_NOK_INCORRECT_TIMESTEP
-};
-
-/*
  * This is the typedef for real numbers
  */
 typedef float REAL;
