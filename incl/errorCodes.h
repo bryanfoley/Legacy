@@ -1,6 +1,9 @@
 /*
  * This is the return type from each function call
  */
+#ifndef ERRORCODES_H_
+#define ERRORCODES_H_
+ 
 typedef enum ERR_MSG
 {
   ERR_OK,
@@ -12,3 +15,5 @@ typedef enum ERR_MSG
 	ERR_NOK_ENERGY_NOT_CONSERVED,
 	ERR_NOK_INCORRECT_TIMESTEP
 } ERR_MSG;
+
+#endif /* ERRORCODES_H */
