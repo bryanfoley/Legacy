@@ -136,6 +136,7 @@ void main(void)
 /*____________________________________________________________________________*/     
 /*_____________________________Execute the program____________________________*/
 /*____________________________________________________________________________*/               
+     ERR_MSG r;
      /*Set the initial properties of the free_particles*/
      initiate(free_particle,image_free_particle,wall_particle,
               free_forces,image_free_forces,wall_free_forces,
@@ -154,8 +155,11 @@ void main(void)
      printf("Setting free particle masses\n");
 /*____________________________________________________________________________*/
      /*Assign static particles the average radii*/
-     set_static_radii(wall_particle,rad);
+     r = set_static_radii(wall_particle,rad);
+     if(ERR_OK == r)
+     {
      printf("Setting static particle radii\n");
+     }
 /*____________________________________________________________________________*/
      /*Assign image particles their radii*/
      for(i = 0; i < n_max; i++)
@@ -241,7 +245,9 @@ void main(void)
      printf("\tYou should have made and drank approx 45.405 cups of coffee\n \t\t\tby the time this simulation finishes.\n");
      printf("\n\n\n\t\t\t\t\tGet brewin'.\n");
      #endif
-     
+     r = ERR_NOK;
+     if(ERR_OK == r)
+     {
      for(packing = min_packing; packing <= max_packing;)       /*BEGIN LOOP*/
       {            
        j = j+1;
@@ -278,6 +284,9 @@ void main(void)
       
       }                                       /*END LOOP*/  
       printf("End of loop\n");
+      }
+      else
+      printf("Something went wrong!\n");
 /*____________________________________________________________________________*/          
 /*____________________________________________________________________________*/          
      /*Print free_particle masses to file 'sys_props.dat'*/
