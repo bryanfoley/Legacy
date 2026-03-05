@@ -165,6 +165,7 @@ void main(void)
      for(i = 0; i < n_max; i++)
       {
        image_free_particle[i][9][0] = free_particle[i][9][0];
+       image_free_particle[i][8][0] = free_particle[i][8][0];
       }
 /*____________________________________________________________________________*/          
      /*Assign static particles the average mass*/

@@ -11,6 +11,8 @@ trace(func_name,action_begin);
      for(i = 0; i < n_max; i++)
       {
          fscanf(in_fptr1,"%lf\t%lf\n",&free_particle[i][2][0],&free_particle[i][3][0]);
+         free_particle[i][2][1] = free_particle[i][2][0];
+         free_particle[i][3][1] = free_particle[i][3][0];
       }
 #ifdef TRACE_ON
 time_stamp();

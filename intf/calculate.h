@@ -13,7 +13,7 @@ void calculate(double free_particle[n_max][m_max][z_max],
                double wall_image_x[n_max][44])
 {
      int i, j;
-     double nx,ny,R1R2,r1r2,red_mass,rel_vel_x,rel_vel_y;
+     double nx,ny,R1R2,r1r2,red_mass,rel_vel_x,rel_vel_y,vn,damp;
 #ifdef TRACE_ON
      char func_name[30] = "calculate";
      char action_begin[10] = ">>>";
@@ -41,8 +41,8 @@ void calculate(double free_particle[n_max][m_max][z_max],
         {
          R1R2 = free_particle[i][9][0] + free_particle[j][9][0];
          
-         r1r2 = sqrt((pow((free_particle[j][2][0] - free_particle[i][2][0]),2.0000000000000000))
-                +(pow((free_particle[j][3][0] - free_particle[i][3][0]),2.0000000000000000)));
+         r1r2 = sqrt((pow((free_particle[j][2][1] - free_particle[i][2][1]),2.0000000000000000))
+                +(pow((free_particle[j][3][1] - free_particle[i][3][1]),2.0000000000000000)));
          
          red_mass = ((free_particle[i][8][0]*free_particle[j][8][0])/(free_particle[i][8][0] + free_particle[j][8][0]));
          
@@ -50,24 +50,26 @@ void calculate(double free_particle[n_max][m_max][z_max],
          
          rel_vel_y = (free_particle[i][1][0] - free_particle[j][1][0]);
                                                
-         if(r1r2 < R1R2)
+         if(r1r2 > 0.0 && r1r2 < R1R2)
           {
            /*Increase the Coordination Number by 1.0 for each collision*/
            free_particle[i][10][0] += 1.0;
            free_particle[j][10][0] += 1.0;
            
            /*Normal force x, component*/
-           nx = (free_particle[i][2][0] - free_particle[j][2][0])/r1r2;
+           nx = (free_particle[i][2][1] - free_particle[j][2][1])/r1r2;
            /*Normal force y, component*/
-           ny = (free_particle[i][3][0] - free_particle[j][3][0])/r1r2;
+           ny = (free_particle[i][3][1] - free_particle[j][3][1])/r1r2;
            
            /*Overlap distance of the two free_particles*/
            x[i][j] = R1R2 - r1r2;
                        
-           /*Repulsive Force, x component*/  
-           free_forces[i][j][0] = ((kn*(x[i][j]))-((gamma*red_mass)*(rel_vel_x*nx)))*nx;
+           /*Repulsive Force, x component*/
+           vn = rel_vel_x*nx + rel_vel_y*ny;
+           damp = (vn < 0.0) ? (-gamma*red_mass*vn) : 0.0;
+           free_forces[i][j][0] = (kn*(x[i][j]) + damp)*nx;
            /*Repulsive Force, y component*/
-           free_forces[i][j][1] = ((kn*(x[i][j]))-((gamma*red_mass)*(rel_vel_y*ny)))*ny;
+           free_forces[i][j][1] = (kn*(x[i][j]) + damp)*ny;
           }
          else
           {
@@ -94,8 +96,8 @@ void calculate(double free_particle[n_max][m_max][z_max],
         {
          R1R2 = image_free_particle[i][9][0] + image_free_particle[j][9][0];
          
-         r1r2 = sqrt((pow((image_free_particle[j][2][0] - image_free_particle[i][2][0]),2.0000000000000000))
-                +(pow((image_free_particle[j][3][0] - image_free_particle[i][3][0]),2.0000000000000000)));
+         r1r2 = sqrt((pow((image_free_particle[j][2][1] - image_free_particle[i][2][1]),2.0000000000000000))
+                +(pow((image_free_particle[j][3][1] - image_free_particle[i][3][1]),2.0000000000000000)));
          
          red_mass = ((image_free_particle[i][8][0]*image_free_particle[j][8][0])/(image_free_particle[i][8][0] + image_free_particle[j][8][0]));
          
@@ -103,20 +105,22 @@ void calculate(double free_particle[n_max][m_max][z_max],
          
          rel_vel_y = (image_free_particle[i][1][0] - image_free_particle[j][1][0]);
                                                
-         if(r1r2 < R1R2)
+         if(r1r2 > 0.0 && r1r2 < R1R2)
           {
            /*Normal force x, component*/
-           nx = (image_free_particle[i][2][0] - image_free_particle[j][2][0])/r1r2;
+           nx = (image_free_particle[i][2][1] - image_free_particle[j][2][1])/r1r2;
            /*Normal force y, component*/
-           ny = (image_free_particle[i][3][0] - image_free_particle[j][3][0])/r1r2;
+           ny = (image_free_particle[i][3][1] - image_free_particle[j][3][1])/r1r2;
            
            /*Overlap distance of the two free_particles*/
            image_image_x[i][j] = R1R2 - r1r2;
                        
-           /*Repulsive Force, x component*/  
-           image_image_forces[i][j][0] = ((kn*(image_image_x[i][j]))-((gamma*red_mass)*(rel_vel_x*nx)))*nx;
+           /*Repulsive Force, x component*/
+           vn = rel_vel_x*nx + rel_vel_y*ny;
+           damp = (vn < 0.0) ? (-gamma*red_mass*vn) : 0.0;
+           image_image_forces[i][j][0] = (kn*(image_image_x[i][j]) + damp)*nx;
            /*Repulsive Force, y component*/
-           image_image_forces[i][j][1] = ((kn*(image_image_x[i][j]))-((gamma*red_mass)*(rel_vel_y*ny)))*ny;
+           image_image_forces[i][j][1] = (kn*(image_image_x[i][j]) + damp)*ny;
           }
          else
           {
@@ -141,8 +145,8 @@ void calculate(double free_particle[n_max][m_max][z_max],
          {
           R1R2 = free_particle[i][9][0] + wall_particle[j][9][0];
           
-          r1r2 = sqrt((pow((wall_particle[j][2][0] - free_particle[i][2][0]),2.0000000000000000))
-                +(pow((wall_particle[j][3][0] - free_particle[i][3][0]),2.0000000000000000)));
+          r1r2 = sqrt((pow((wall_particle[j][2][0] - free_particle[i][2][1]),2.0000000000000000))
+                +(pow((wall_particle[j][3][0] - free_particle[i][3][1]),2.0000000000000000)));
                 
           red_mass = ((free_particle[i][8][0]*wall_particle[j][8][0])/(free_particle[i][8][0] + wall_particle[j][8][0]));
           
@@ -150,23 +154,25 @@ void calculate(double free_particle[n_max][m_max][z_max],
          
           rel_vel_y = (free_particle[i][1][0] - wall_particle[j][1][0]);
                 
-          if(r1r2 < R1R2)
+          if(r1r2 > 0.0 && r1r2 < R1R2)
           {
            /*Increase the Coordination Number by 1.0 for each collision*/
            free_particle[i][10][0] += 1.0;
            wall_particle[j][10][0] += 1.0;
            /*Normal force x, component*/
-           nx = (free_particle[i][2][0] - wall_particle[j][2][0])/r1r2;
+           nx = (free_particle[i][2][1] - wall_particle[j][2][0])/r1r2;
            /*Normal force y, component*/
-           ny = (free_particle[i][3][0] - wall_particle[j][3][0])/r1r2;
+           ny = (free_particle[i][3][1] - wall_particle[j][3][0])/r1r2;
            
            /*Overlap distance of the two particles*/
            wall_x[i][j] = R1R2 - r1r2;
                        
-           /*Repulsive Force, x component*/  
-           wall_free_forces[i][j][0] = ((kn*(wall_x[i][j]))-((gamma*red_mass)*(rel_vel_x*nx)))*nx;
+           /*Repulsive Force, x component*/
+           vn = rel_vel_x*nx + rel_vel_y*ny;
+           damp = (vn < 0.0) ? (-gamma*red_mass*vn) : 0.0;
+           wall_free_forces[i][j][0] = (kn*(wall_x[i][j]) + damp)*nx;
            /*Repulsive Force, y component*/
-           wall_free_forces[i][j][1] = ((kn*(wall_x[i][j]))-((gamma*red_mass)*(rel_vel_y*ny)))*ny;
+           wall_free_forces[i][j][1] = (kn*(wall_x[i][j]) + damp)*ny;
           }
          else
           {
@@ -189,8 +195,8 @@ void calculate(double free_particle[n_max][m_max][z_max],
         {
          R1R2 = free_particle[i][9][0] + image_free_particle[j][9][0];
          
-         r1r2 = sqrt((pow((image_free_particle[j][2][0] - free_particle[i][2][0]),2.0000000000000000))
-                +(pow((image_free_particle[j][3][0] - free_particle[i][3][0]),2.0000000000000000)));
+         r1r2 = sqrt((pow((image_free_particle[j][2][1] - free_particle[i][2][1]),2.0000000000000000))
+                +(pow((image_free_particle[j][3][1] - free_particle[i][3][1]),2.0000000000000000)));
                 
          red_mass = ((free_particle[i][8][0]*image_free_particle[j][8][0])/(free_particle[i][8][0] + image_free_particle[j][8][0]));
          
@@ -199,23 +205,25 @@ void calculate(double free_particle[n_max][m_max][z_max],
          rel_vel_y = (free_particle[i][1][0] - image_free_particle[j][1][0]);
          
                                                
-         if(r1r2 < R1R2)
+         if(r1r2 > 0.0 && r1r2 < R1R2)
           {
            /*Increase the Coordination Number by 1.0 for each collision*/
            free_particle[i][10][0] += 1.0;
            image_free_particle[j][10][0] += 1.0;
            /*Normal force x, component*/
-           nx = (free_particle[i][2][0] - image_free_particle[j][2][0])/r1r2;
+           nx = (free_particle[i][2][1] - image_free_particle[j][2][1])/r1r2;
            /*Normal force y, component*/
-           ny = (free_particle[i][3][0] - image_free_particle[j][3][0])/r1r2;
+           ny = (free_particle[i][3][1] - image_free_particle[j][3][1])/r1r2;
            
            /*Overlap distance of the two particles*/
            image_x[i][j] = R1R2 - r1r2;
                        
-           /*Repulsive Force, x component*/  
-           image_free_forces[i][j][0] = ((kn*(image_x[i][j]))-((gamma*red_mass)*(rel_vel_x*nx)))*nx;
+           /*Repulsive Force, x component*/
+           vn = rel_vel_x*nx + rel_vel_y*ny;
+           damp = (vn < 0.0) ? (-gamma*red_mass*vn) : 0.0;
+           image_free_forces[i][j][0] = (kn*(image_x[i][j]) + damp)*nx;
            /*Repulsive Force, y component*/
-           image_free_forces[i][j][1] = ((kn*(image_x[i][j]))-((gamma*red_mass)*(rel_vel_y*ny)))*ny;
+           image_free_forces[i][j][1] = (kn*(image_x[i][j]) + damp)*ny;
            
            
           }
@@ -243,8 +251,8 @@ void calculate(double free_particle[n_max][m_max][z_max],
         {
          R1R2 = wall_particle[j][9][0] + image_free_particle[i][9][0];
          
-         r1r2 = sqrt((pow((wall_particle[j][2][0] - image_free_particle[i][2][0]),2.0000000000000000))
-                +(pow((wall_particle[j][3][0] - image_free_particle[i][3][0]),2.0000000000000000)));
+         r1r2 = sqrt((pow((wall_particle[j][2][0] - image_free_particle[i][2][1]),2.0000000000000000))
+                +(pow((wall_particle[j][3][0] - image_free_particle[i][3][1]),2.0000000000000000)));
                 
          red_mass = ((image_free_particle[i][8][0]*wall_particle[j][8][0])/(image_free_particle[i][8][0] + wall_particle[j][8][0]));
          
@@ -252,20 +260,22 @@ void calculate(double free_particle[n_max][m_max][z_max],
          
          rel_vel_y = (image_free_particle[i][1][0] - wall_particle[j][1][0]);
                                                
-         if(r1r2 < R1R2)
+         if(r1r2 > 0.0 && r1r2 < R1R2)
           {
            /*Normal force x, component*/
-           nx = (image_free_particle[i][2][0] - wall_particle[j][2][0])/r1r2;
+           nx = (image_free_particle[i][2][1] - wall_particle[j][2][0])/r1r2;
            /*Normal force y, component*/
-           ny = (image_free_particle[i][3][0] - wall_particle[j][3][0])/r1r2;
+           ny = (image_free_particle[i][3][1] - wall_particle[j][3][0])/r1r2;
            
            /*Overlap distance of the two particles*/
            wall_image_x[i][j] = R1R2 - r1r2;
                        
-           /*Repulsive Force, x component*/  
-           wall_image_forces[i][j][0] = ((kn*(wall_image_x[i][j]))-((gamma*red_mass)*(rel_vel_x*nx)))*nx;
+           /*Repulsive Force, x component*/
+           vn = rel_vel_x*nx + rel_vel_y*ny;
+           damp = (vn < 0.0) ? (-gamma*red_mass*vn) : 0.0;
+           wall_image_forces[i][j][0] = (kn*(wall_image_x[i][j]) + damp)*nx;
            /*Repulsive Force, y component*/
-           wall_image_forces[i][j][1] = ((kn*(wall_image_x[i][j]))-((gamma*red_mass)*(rel_vel_y*ny)))*ny;
+           wall_image_forces[i][j][1] = (kn*(wall_image_x[i][j]) + damp)*ny;
           }
          else
           {
