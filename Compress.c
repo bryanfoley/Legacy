@@ -245,7 +245,6 @@ void main(void)
      printf("\tYou should have made and drank approx 45.405 cups of coffee\n \t\t\tby the time this simulation finishes.\n");
      printf("\n\n\n\t\t\t\t\tGet brewin'.\n");
      #endif
-     r = ERR_NOK;
      if(ERR_OK == r)
      {
      for(packing = min_packing; packing <= max_packing;)       /*BEGIN LOOP*/

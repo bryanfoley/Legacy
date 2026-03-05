@@ -283,7 +283,6 @@ docker build -t granular-sim . && docker run --rm -v "$(pwd)/results:/app/result
 
 ## Known Limitations
 
-- The main simulation loop is guarded by `if(ERR_OK == r)` where `r` is hardcoded to `ERR_NOK`, so the compression loop does **not** execute in the current code. The initialisation, force calculation, and single-step output still run successfully.
 - The `src/*.c` files are not compiled by the makefile; their functionality is provided by the `intf/*.h` implementations included directly into `Compress.c`.
 - Function bodies defined in `.h` files is non-standard; the `-w` compiler flag suppresses the resulting warnings.
 - `void main(void)` is used instead of `int main(void)` — this is valid in older C standards but not C99/C11.
